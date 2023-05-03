@@ -2,6 +2,9 @@ from py2neo import Graph
 import argparse
 """
 Baseline recommendation system. Recommends ingredients co-occurring with all input ingredients. Recommendations are sorted by their co-occurence frequency.
+
+Usage:
+    python3 rec_neo.py -l [limit] [ingredients]
 """
 def recommend(graph, x, limit):
     """
@@ -47,11 +50,14 @@ def main():
     url= 'bolt://localhost:7687'
     user = 'neo4j'
     password = 'admin'
-    G = Graph(url, auth=(user, password))
+    try:
+        G = Graph(url, auth=(user, password))
+    except:
+        raise RuntimeError('Graph database not running.')
     # get recommendations
     recs = recommend(G, x, args.limit)
     # print recommendations
-    for i, (rec, _) in enumerate(recs,1):
+    for i, rec in enumerate(recs,1):
         print(f'{i:>2}: {rec}')
 
 if __name__ == '__main__':
